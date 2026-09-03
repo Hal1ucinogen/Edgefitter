@@ -209,16 +209,18 @@ class ModuleMain : XposedModule() {
         return null
     }
 
-    private fun Activity.getIntentRoute(): String? {
+    private fun Activity.getIntentRoute(customKey: String): String? {
         val intent = this.intent ?: return null
-        return intent.getStringExtra("url")
-            ?: intent.dataString
-            ?: intent.getStringExtra("ROUTER_URL_DATA")
+        if (customKey == "data") return intent.dataString
+        return runCatching { intent.getStringExtra(customKey) }.getOrNull()
+            ?: runCatching { intent.extras?.get(customKey)?.toString() }.getOrNull()
     }
 
     private fun ExtraAction.isRouteMatch(activity: Activity): Boolean {
         if (routes.isEmpty()) return true
-        val route = activity.getIntentRoute() ?: return isRouteExclusive
+        if (routeKey.isNullOrBlank()) return true
+        val route = activity.getIntentRoute(routeKey) ?: return isRouteExclusive
+        log(Log.INFO, TAG, "Activity Intent Route | $route (key: $routeKey)")
         val matched = routes.any { route.contains(it) }
         return if (isRouteExclusive) !matched else matched
     }

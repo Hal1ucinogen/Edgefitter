@@ -236,6 +236,28 @@
 
         <!-- Routes Filter -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_route_key"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="@string/field_route_key"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:placeholderText="@string/hint_route_key">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_route_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textSize="14sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_routes"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"

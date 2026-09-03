@@ -49,5 +49,6 @@ data class ExtraAction(
     val delay: Long = 100L,
     val routes: List<String> = emptyList(),
     val isRouteExclusive: Boolean = false,
+    val routeKey: String? = null,
     val action: ViewAction = ViewAction.Inset()
 )

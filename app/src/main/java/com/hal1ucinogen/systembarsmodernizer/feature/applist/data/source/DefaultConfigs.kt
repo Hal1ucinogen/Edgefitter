@@ -72,6 +72,7 @@ object DefaultConfigs {
                             childIndex = 0,
                             routes = listOf("x_chat", "rate_detail", "order_detail_new"),
                             isRouteExclusive = true,
+                            routeKey = "url",
                             action = ViewAction.Inset(
                                 spacingType = SpacingType.MARGIN,
                                 edge = InsetEdge.BOTTOM,
@@ -168,6 +169,9 @@ object DefaultConfigs {
                             isGroup = true,
                             self = false,
                             childIndex = 0,
+                            routes = listOf("taopiaopiao", "outfliggys"),
+                            isRouteExclusive = true,
+                            routeKey = "extra_data_key",
                             action = ViewAction.Inset(
                                 spacingType = SpacingType.MARGIN,
                                 edge = InsetEdge.BOTTOM,

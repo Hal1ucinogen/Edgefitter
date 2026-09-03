@@ -84,6 +84,8 @@
     <string name="switch_self">Apply to Self</string>
     <string name="field_child_index">Child Index (-1 for all/none)</string>
     <string name="field_delay">Action Delay (ms)</string>
+    <string name="field_route_key">Route Intent Key (Optional)</string>
+    <string name="hint_route_key">e.g. url, extra_data_key (blank to pass)</string>
     <string name="field_routes">Route Filter Keywords (comma separated)</string>
     <string name="hint_routes">e.g. x_chat, session_group</string>
     <string name="switch_route_exclusive">Exclude Matched Routes (Blacklist)</string>

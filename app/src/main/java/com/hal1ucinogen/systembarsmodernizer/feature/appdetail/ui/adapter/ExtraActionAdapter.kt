@@ -52,7 +52,8 @@ class ExtraActionAdapter(
                 append(" • ${item.delay}ms")
             }
             if (item.routes.isNotEmpty()) {
-                append(if (item.isRouteExclusive) " • Exclude: " else " • Include: ")
+                val keyPrefix = if (!item.routeKey.isNullOrEmpty()) "[${item.routeKey}] " else ""
+                append(if (item.isRouteExclusive) " • ${keyPrefix}Exclude: " else " • ${keyPrefix}Include: ")
                 append(item.routes.joinToString(", "))
             }
         }

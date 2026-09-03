@@ -84,6 +84,8 @@
     <string name="switch_self">作用于自身</string>
     <string name="field_child_index">子 View 索引（-1 为无/全选）</string>
     <string name="field_delay">动作延迟 (ms)</string>
+    <string name="field_route_key">路由 Intent 键名（选填）</string>
+    <string name="hint_route_key">如 url, extra_data_key（留空直接放行）</string>
     <string name="field_routes">路由过滤关键字（逗号分隔）</string>
     <string name="hint_routes">例如 x_chat, session_group</string>
     <string name="switch_route_exclusive">排除匹配的路由（黑名单模式）</string>

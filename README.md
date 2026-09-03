@@ -122,6 +122,7 @@ data class ExtraAction(
     val delay: Long = 100L,            // 动作执行延迟时间（毫秒，默认 100ms）
     val routes: List<String> = emptyList(), // 路由过滤关键字列表（匹配 Intent 中的 url/data）
     val isRouteExclusive: Boolean = false,  // 路由过滤模式（true 为黑名单排除，false 为白名单包含）
+    val routeKey: String? = null,      // 自定义 Intent extra 路由键名（留空为 null，直接放行）
     val action: ViewAction = ViewAction.Inset() // 具体的布局修改动作（密封类型体系）
 )
 
@@ -182,11 +183,12 @@ sealed interface ViewAction {
       action = ViewAction.Visibility(mode = VisibilityMode.GONE)
   )
   ```
-- **场景 6：混合框架（如 FlutterBoost）基于 Intent 路由黑/白名单过滤**
+- **场景 6：混合框架（如 FlutterBoost）基于 Intent 路由黑/白名单过滤与自定义键名**
   ```kotlin
-  // 针对通用容器 Activity，清空列表页的 Margin，但排除聊天等带底栏的路由页面
+  // 针对通用容器 Activity，清空列表页的 Margin，但通过自定义 routeKey 排除带底栏的路由
   ExtraAction(
       viewId = "decor", isGroup = true, self = false, childIndex = 0,
+      routeKey = "extra_data_key", // 自定义 Intent 路由键名（如淘宝等特定业务容器）
       routes = listOf("x_chat"), isRouteExclusive = true,
       action = ViewAction.Inset(spacingType = SpacingType.MARGIN, edge = InsetEdge.BOTTOM, customInset = 0)
   )
