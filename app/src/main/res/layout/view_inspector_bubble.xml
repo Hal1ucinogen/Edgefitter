@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bubble_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/Theme.SystemBarsModernizer"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:cardMaxElevation="0dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:id="@+id/bubble_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="9dp">
+
+        <!-- App Icon -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            app:cardCornerRadius="17dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="0.5dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_bubble_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Title & Status Message Column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_bubble_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-bold"
+                android:maxLines="1"
+                android:text="Edgefitter Inspector"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/tv_bubble_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:maxLines="3"
+                android:text="@string/inspector_status_idle"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="10.5sp"
+                tools:text="到目标页面点击按钮可触发检查" />
+
+        </LinearLayout>
+
+        <!-- Trigger Button & Progress Indicator -->
+        <FrameLayout
+            android:id="@+id/container_inspect_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_bubble_inspect"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="0dp"
+                android:text="@string/inspector_btn_inspect"
+                android:textSize="11.5sp"
+                app:cornerRadius="17dp"
+                app:icon="@drawable/ic_inspect"
+                app:iconPadding="4dp"
+                app:iconSize="15dp" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="?attr/colorPrimary"
+                app:indicatorSize="22dp"
+                app:trackThickness="2.5dp" />
+
+        </FrameLayout>
+
+        <!-- Vertical Divider -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Close Button -->
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_bubble_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/inspector_stop"
+            android:padding="6dp"
+            android:src="@drawable/ic_close"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -53,6 +53,33 @@ class OverviewFragment : BaseFragment<FragmentOverviewBinding>(), SBMApp.Service
                 ScopeListDialog(currentScope).show(childFragmentManager, "ScopeListDialog")
             }
         }
+
+        binding.btnLaunchInspector.setOnClickListener {
+            launchInspector()
+        }
+    }
+
+    private fun launchInspector() {
+        val context = requireContext()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M &&
+            !android.provider.Settings.canDrawOverlays(context)
+        ) {
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.inspector_permission_title)
+                .setMessage(R.string.inspector_permission_desc)
+                .setPositiveButton(R.string.inspector_permission_grant) { _, _ ->
+                    val intent = android.content.Intent(
+                        android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        android.net.Uri.parse("package:${context.packageName}")
+                    )
+                    runCatching { startActivity(intent) }
+                }
+                .setNegativeButton(R.string.action_cancel, null)
+                .show()
+        } else {
+            com.hal1ucinogen.systembarsmodernizer.feature.inspector.service.InspectorFloatingService.start(context)
+            android.widget.Toast.makeText(context, R.string.inspector_notification_title, android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun observeData() {

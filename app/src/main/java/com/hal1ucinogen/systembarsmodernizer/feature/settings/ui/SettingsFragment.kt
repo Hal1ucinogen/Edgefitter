@@ -78,6 +78,31 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
+        // 0. Launch Inspector
+        findPreference<Preference>("pref_launch_inspector")?.setOnPreferenceClickListener {
+            val ctx = requireContext()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M &&
+                !android.provider.Settings.canDrawOverlays(ctx)
+            ) {
+                com.google.android.material.dialog.MaterialAlertDialogBuilder(ctx)
+                    .setTitle(R.string.inspector_permission_title)
+                    .setMessage(R.string.inspector_permission_desc)
+                    .setPositiveButton(R.string.inspector_permission_grant) { _, _ ->
+                        val intent = Intent(
+                            android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:${ctx.packageName}")
+                        )
+                        runCatching { startActivity(intent) }
+                    }
+                    .setNegativeButton(R.string.action_cancel, null)
+                    .show()
+            } else {
+                com.hal1ucinogen.systembarsmodernizer.feature.inspector.service.InspectorFloatingService.start(ctx)
+                Toast.makeText(ctx, R.string.inspector_notification_title, Toast.LENGTH_SHORT).show()
+            }
+            true
+        }
+
         // 1. Force Sync
         findPreference<Preference>("pref_force_sync_configs")?.setOnPreferenceClickListener {
             forceSyncConfigs()

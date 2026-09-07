@@ -7,6 +7,12 @@
         app:iconSpaceReserved="false">
 
         <Preference
+            android:key="pref_launch_inspector"
+            android:title="@string/inspector_title"
+            android:summary="@string/inspector_desc"
+            app:iconSpaceReserved="false" />
+
+        <Preference
             android:key="pref_force_sync_configs"
             android:title="@string/pref_force_sync_title"
             android:summary="@string/pref_force_sync_summary"

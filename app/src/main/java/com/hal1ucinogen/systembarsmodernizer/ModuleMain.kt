@@ -2,6 +2,7 @@ package com.hal1ucinogen.systembarsmodernizer
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
@@ -29,6 +30,8 @@ import com.hal1ucinogen.systembarsmodernizer.bean.PageConfig
 import com.hal1ucinogen.systembarsmodernizer.bean.SpacingType
 import com.hal1ucinogen.systembarsmodernizer.bean.ViewAction
 import com.hal1ucinogen.systembarsmodernizer.bean.VisibilityMode
+import com.hal1ucinogen.systembarsmodernizer.feature.inspector.hook.InspectorHook
+import com.hal1ucinogen.systembarsmodernizer.feature.inspector.ipc.InspectorIpc
 import com.hal1ucinogen.systembarsmodernizer.tool.Task
 import com.hal1ucinogen.systembarsmodernizer.util.getNavigationHeight
 import com.hal1ucinogen.systembarsmodernizer.util.getStatusHeight
@@ -73,10 +76,21 @@ class ModuleMain : XposedModule() {
         log(Log.INFO, TAG, "module apk path: " + this.moduleApplicationInfo.sourceDir)
         log(Log.INFO, TAG, "----------")
         if (!param.isFirstPackage) return
-        if (param.applicationInfo.processName.contains(":")) return
+        val currentProcessName = Application.getProcessName()
+        if (currentProcessName.contains(":")) return
         try {
             val packageName = param.packageName
             val prefs = getRemotePreferences(CONFIG_PREF_NAME)
+
+            // Dynamic inspector gate: only initialize inspector if inspector service is active
+            val isInspectorActive = runCatching {
+                prefs.getBoolean(InspectorIpc.PREF_KEY_INSPECTOR_ACTIVE, false)
+            }.getOrDefault(false)
+
+            if (isInspectorActive) {
+                InspectorHook.init(this)
+            }
+
             val appConfigStr = prefs.getString(packageName, null)
             if (appConfigStr.isNullOrEmpty()) {
                 log(Log.INFO, TAG, "Remote prefs: app config is null")

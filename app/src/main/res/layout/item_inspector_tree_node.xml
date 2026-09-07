@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingVertical="6dp"
+    android:paddingEnd="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Indentation spacer -->
+        <View
+            android:id="@+id/view_indent"
+            android:layout_width="0dp"
+            android:layout_height="1dp" />
+
+        <!-- Expand / Collapse chevron -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_chevron"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <!-- View Class Simple Name -->
+        <TextView
+            android:id="@+id/tv_class_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="13sp"
+            tools:text="FrameLayout" />
+
+        <!-- View Resource ID Badge -->
+        <TextView
+            android:id="@+id/tv_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_inspector_badge"
+            android:fontFamily="monospace"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="11sp"
+            tools:text="id/nav_bar_placeholder" />
+
+        <!-- Visibility Badge if not VISIBLE -->
+        <TextView
+            android:id="@+id/tv_visibility_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_inspector_badge"
+            android:fontFamily="sans-serif-medium"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="1dp"
+            android:textColor="?attr/colorError"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:text="GONE"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- Details Line: Bounds, Padding, Margin, and Warning Badges -->
+    <LinearLayout
+        android:id="@+id/layout_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Indentation spacer for subline -->
+        <View
+            android:id="@+id/view_indent_sub"
+            android:layout_width="0dp"
+            android:layout_height="1dp" />
+
+        <Space
+            android:layout_width="20dp"
+            android:layout_height="1dp" />
+
+        <TextView
+            android:id="@+id/tv_insets_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="10.5sp"
+            tools:text="[0,0,1080,2400] Pad:[0,84,0,168] Mar:[0,0,0,0]" />
+
+        <!-- Warning Tag: Matches Nav Bar -->
+        <TextView
+            android:id="@+id/badge_warning_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_inspector_badge"
+            android:fontFamily="sans-serif-medium"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:text="@string/inspector_badge_suspicious_nav"
+            android:textColor="?attr/colorError"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- Warning Tag: Matches Status Bar -->
+        <TextView
+            android:id="@+id/badge_warning_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_inspector_badge"
+            android:fontFamily="sans-serif-medium"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:text="@string/inspector_badge_suspicious_status"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -4,6 +4,10 @@
     tools:ignore="QueryAllPackagesPermission">
 
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".SBMApp"
@@ -42,5 +46,14 @@
             android:exported="false"
             android:label="@string/title_app_config_edit"
             android:theme="@style/Theme.SystemBarsModernizer" />
+
+        <service
+            android:name=".feature.inspector.service.InspectorFloatingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="In-app floating layout inspector for edge-to-edge debugging" />
+        </service>
     </application>
 </manifest>

@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.hal1ucinogen.systembarsmodernizer.CONFIG_PREF_NAME
 import com.hal1ucinogen.systembarsmodernizer.SBMApp
 import com.hal1ucinogen.systembarsmodernizer.bean.AppConfig
+import com.hal1ucinogen.systembarsmodernizer.feature.inspector.ipc.InspectorIpc
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -87,6 +88,24 @@ object ConfigSyncManager {
             true
         }.getOrElse { e ->
             Log.e(TAG, "Failed to clear remote configs", e)
+            false
+        }
+    }
+
+    fun setInspectorActive(active: Boolean): Boolean {
+        val service = SBMApp.mService ?: run {
+            Log.w(TAG, "Cannot set inspector active: XposedService is null")
+            return false
+        }
+        return runCatching {
+            val prefs = service.getRemotePreferences(CONFIG_PREF_NAME)
+            prefs.edit {
+                putBoolean(InspectorIpc.PREF_KEY_INSPECTOR_ACTIVE, active)
+            }
+            Log.i(TAG, "Successfully updated inspector active state to $active")
+            true
+        }.getOrElse { e ->
+            Log.e(TAG, "Failed to update inspector active state to $active", e)
             false
         }
     }
