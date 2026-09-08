@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hal1ucinogen.systembarsmodernizer.databinding.ItemInspectorTreeNodeBinding
+import com.hal1ucinogen.systembarsmodernizer.feature.inspector.advisor.HeuristicAdvisor
 import com.hal1ucinogen.systembarsmodernizer.feature.inspector.model.InspectorViewNode
 import kotlin.math.abs
 
@@ -137,21 +138,43 @@ class InspectorTreeAdapter(
                 }
             }
 
-            // Insets info: [L,T,R,B] Pad:[...] Mar:[...]
+            // Insets info: [L,T,R,B] (WxH) P:[...] M:[...]
             val bounds = node.screenBounds
-            val boundsStr = "[${bounds.left},${bounds.top}..${bounds.right},${bounds.bottom}]"
-            val padStr = "Pad:[${node.paddingTop},${node.paddingBottom},${node.paddingStart},${node.paddingEnd}]"
-            val marStr = if (node.marginTop != 0 || node.marginBottom != 0 || node.marginStart != 0 || node.marginEnd != 0) {
-                " Mar:[${node.marginTop},${node.marginBottom},${node.marginStart},${node.marginEnd}]"
+            val boundsStr = "[${bounds.left},${bounds.top}..${bounds.right},${bounds.bottom}](${node.width}×${node.height})"
+            val padStr = if (node.paddingTop != 0 || node.paddingBottom != 0 || node.paddingStart != 0 || node.paddingEnd != 0) {
+                "P:[${node.paddingTop},${node.paddingBottom},${node.paddingStart},${node.paddingEnd}]"
             } else ""
-            binding.tvInsetsInfo.text = "$boundsStr $padStr$marStr"
+            val marStr = if (node.marginTop != 0 || node.marginBottom != 0 || node.marginStart != 0 || node.marginEnd != 0) {
+                "M:[${node.marginTop},${node.marginBottom},${node.marginStart},${node.marginEnd}]"
+            } else ""
+            binding.tvInsetsInfo.text = listOf(boundsStr, padStr, marStr)
+                .filter { it.isNotEmpty() }
+                .joinToString("\n")
 
-            // Warning badges
+            // Warning badges: check padding, margin, or spacer view height
+            val displayMetrics = context.resources.displayMetrics
+            val screenWidth = displayMetrics.widthPixels
+            val screenHeight = displayMetrics.heightPixels
+
+            val matchesStatusHeight = statusBarHeight > 0 &&
+                    abs(node.height - statusBarHeight) <= 4 &&
+                    (HeuristicAdvisor.isPlaceholderId(node.idEntryName) ||
+                            (node.children.isEmpty() && node.width >= screenWidth * 0.4f && node.screenBounds.top <= statusBarHeight * 2))
+
+            val matchesNavHeight = navBarHeight > 0 &&
+                    abs(node.height - navBarHeight) <= 4 &&
+                    (HeuristicAdvisor.isPlaceholderId(node.idEntryName) ||
+                            (node.children.isEmpty() && node.width >= screenWidth * 0.4f && node.screenBounds.bottom >= screenHeight - navBarHeight * 2))
+
             val matchesNavBar = navBarHeight > 0 && (
-                    abs(node.paddingBottom - navBarHeight) <= 4 || abs(node.marginBottom - navBarHeight) <= 4
+                    abs(node.paddingBottom - navBarHeight) <= 4 ||
+                    abs(node.marginBottom - navBarHeight) <= 4 ||
+                    matchesNavHeight
                     )
             val matchesStatusBar = statusBarHeight > 0 && (
-                    abs(node.paddingTop - statusBarHeight) <= 4 || abs(node.marginTop - statusBarHeight) <= 4
+                    abs(node.paddingTop - statusBarHeight) <= 4 ||
+                    abs(node.marginTop - statusBarHeight) <= 4 ||
+                    matchesStatusHeight
                     )
 
             binding.badgeWarningNav.visibility = if (matchesNavBar) View.VISIBLE else View.GONE

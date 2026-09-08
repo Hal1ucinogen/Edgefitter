@@ -17,9 +17,6 @@ object HeuristicAdvisor : InspectorAdvisor {
         val navBarH = report.navBarHeight
         val statusBarH = report.statusBarHeight
 
-        // Candidate route keys from intent extras
-        val candidateRouteKey = findCandidateRouteKey(report)
-
         fun traverse(node: InspectorViewNode) {
             val viewTargetId = when {
                 node.isDecor -> "decor"
@@ -44,7 +41,6 @@ object HeuristicAdvisor : InspectorAdvisor {
                                 isGroup = true,
                                 self = false,
                                 childIndex = 0,
-                                routeKey = candidateRouteKey,
                                 action = ViewAction.Inset(
                                     spacingType = SpacingType.MARGIN,
                                     edge = InsetEdge.BOTTOM,
@@ -67,7 +63,6 @@ object HeuristicAdvisor : InspectorAdvisor {
                                 isGroup = true,
                                 self = false,
                                 childIndex = 0,
-                                routeKey = candidateRouteKey,
                                 action = ViewAction.Inset(
                                     spacingType = SpacingType.PADDING,
                                     edge = InsetEdge.BOTTOM,
@@ -94,7 +89,6 @@ object HeuristicAdvisor : InspectorAdvisor {
                         suggestedAction = ExtraAction(
                             viewId = viewTargetId,
                             self = true,
-                            routeKey = candidateRouteKey,
                             action = ViewAction.Inset(
                                 spacingType = SpacingType.PADDING,
                                 edge = InsetEdge.BOTTOM,
@@ -118,7 +112,6 @@ object HeuristicAdvisor : InspectorAdvisor {
                         suggestedAction = ExtraAction(
                             viewId = viewTargetId,
                             self = true,
-                            routeKey = candidateRouteKey,
                             action = ViewAction.Inset(
                                 spacingType = SpacingType.MARGIN,
                                 edge = InsetEdge.BOTTOM,
@@ -131,30 +124,35 @@ object HeuristicAdvisor : InspectorAdvisor {
             }
 
             // 4. Suspect placeholder / spacer view
-            val idName = node.idEntryName?.lowercase()
-            if (idName != null && isPlaceholderId(idName)) {
-                val isHeightMatching = navBarH > 0 && abs(node.height - navBarH) <= 6 ||
-                        statusBarH > 0 && abs(node.height - statusBarH) <= 6
-                if (isHeightMatching || node.children.isEmpty()) {
-                    suggestions.add(
-                        RuleSuggestion(
-                            id = "placeholder_gone_${node.idEntryName}",
-                            title = "隐藏占位空白条: @id/${node.idEntryName}",
-                            description = "检测到命名为 '${node.idEntryName}' 的疑似系统栏占位条 (高度: ${node.height}px)。建议将其设为 GONE 并折叠尺寸。",
-                            confidence = if (isHeightMatching) 0.92f else 0.75f,
-                            targetViewId = node.idEntryName,
-                            suggestedAction = ExtraAction(
-                                viewId = node.idEntryName,
-                                self = true,
-                                routeKey = candidateRouteKey,
-                                action = ViewAction.Visibility(
-                                    mode = VisibilityMode.GONE,
-                                    collapseSize = true
-                                )
+            val idName = node.idEntryName
+            val isStatusSpacer = statusBarH > 0 && abs(node.height - statusBarH) <= 6 &&
+                    (isPlaceholderId(idName) || (node.children.isEmpty() && node.screenBounds.top <= statusBarH * 2))
+            val isNavSpacer = navBarH > 0 && abs(node.height - navBarH) <= 6 &&
+                    (isPlaceholderId(idName) || (node.children.isEmpty() && node.screenBounds.bottom >= report.viewTree.height - navBarH * 2))
+
+            if ((isStatusSpacer || isNavSpacer) && (idName != null || node.isDecorChild)) {
+                val targetName = if (node.isDecorChild) "decor[#${node.childIndex}]" else "@id/$idName"
+                val barType = if (isStatusSpacer) "状态栏" else "导航栏"
+                val targetHeight = if (isStatusSpacer) statusBarH else navBarH
+                suggestions.add(
+                    RuleSuggestion(
+                        id = "placeholder_gone_${node.idEntryName ?: "decor_${node.childIndex}"}",
+                        title = "隐藏疑似${barType}占位条: $targetName",
+                        description = "检测到高度为 ${node.height}px (匹配${barType}高度 ${targetHeight}px) 的疑似占位条。建议将其设为 GONE 并折叠尺寸。",
+                        confidence = if (isPlaceholderId(idName)) 0.95f else 0.82f,
+                        targetViewId = if (node.isDecorChild) "decor" else (node.idEntryName ?: "decor"),
+                        suggestedAction = ExtraAction(
+                            viewId = if (node.isDecorChild) "decor" else (node.idEntryName ?: "decor"),
+                            isGroup = node.isDecorChild,
+                            self = !node.isDecorChild,
+                            childIndex = if (node.isDecorChild) node.childIndex else -1,
+                            action = ViewAction.Visibility(
+                                mode = VisibilityMode.GONE,
+                                collapseSize = true
                             )
                         )
                     )
-                }
+                )
             }
 
             // Recurse into children
@@ -167,24 +165,22 @@ object HeuristicAdvisor : InspectorAdvisor {
         return suggestions.distinctBy { it.id }.sortedByDescending { it.confidence }
     }
 
-    private fun isPlaceholderId(idName: String): Boolean {
-        return idName.contains("placeholder") ||
-                idName.contains("spacer") ||
-                idName.contains("fake_status") ||
-                idName.contains("fake_nav") ||
-                idName.contains("navigation_bar_view") ||
-                idName.contains("status_bar_view") ||
-                idName.contains("nav_bar_background") ||
-                idName.contains("status_bar_background")
-    }
-
-    private fun findCandidateRouteKey(report: InspectorReport): String? {
-        val keys = report.intentExtras.keys
-        val candidates = listOf("url", "route", "router", "target", "path", "page", "uri")
-        for (candidate in candidates) {
-            val matched = keys.firstOrNull { it.contains(candidate, ignoreCase = true) }
-            if (matched != null) return matched
-        }
-        return if (report.intentData != null) "data" else null
+    fun isPlaceholderId(idName: String?): Boolean {
+        if (idName == null) return false
+        val lower = idName.lowercase()
+        return lower.contains("placeholder") ||
+                lower.contains("spacer") ||
+                lower.contains("fake_status") ||
+                lower.contains("fake_nav") ||
+                lower.contains("navigation_bar_view") ||
+                lower.contains("status_bar_view") ||
+                lower.contains("nav_bar_background") ||
+                lower.contains("status_bar_background") ||
+                lower.contains("statusbar_view") ||
+                lower.contains("navbar_view") ||
+                lower.contains("status_bar_holder") ||
+                lower.contains("nav_bar_holder") ||
+                lower.contains("status_bar") ||
+                lower.contains("navigation_bar")
     }
 }

@@ -249,24 +249,54 @@ class InspectorPanelView(
         val isDecorChild = node.isDecorChild
         val childIndex = if (isDecorChild) node.childIndex else -1
 
-        // Default to resetting bottom margin or padding if present
-        val isMargin = node.marginBottom > 0
-        val defaultAction = ExtraAction(
-            viewId = targetId,
-            isGroup = node.isDecor || node.isDecorChild,
-            self = !isDecorChild,
-            childIndex = childIndex,
-            action = ViewAction.Inset(
-                spacingType = if (isMargin) com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.MARGIN
-                else com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.PADDING,
-                edge = com.hal1ucinogen.systembarsmodernizer.bean.InsetEdge.BOTTOM,
-                customInset = 0
-            )
-        )
+        val isStatusHeight = report.statusBarHeight > 0 && kotlin.math.abs(node.height - report.statusBarHeight) <= 4
+        val isNavHeight = report.navBarHeight > 0 && kotlin.math.abs(node.height - report.navBarHeight) <= 4
+        val isZeroSpacing = node.paddingTop == 0 && node.paddingBottom == 0 && node.marginTop == 0 && node.marginBottom == 0
+
+        val (defaultAction, actionDesc) = if ((isStatusHeight || isNavHeight) && isZeroSpacing && node.children.isEmpty()) {
+            ExtraAction(
+                viewId = targetId,
+                isGroup = node.isDecor || node.isDecorChild,
+                self = !isDecorChild,
+                childIndex = childIndex,
+                action = ViewAction.Visibility(
+                    mode = com.hal1ucinogen.systembarsmodernizer.bean.VisibilityMode.GONE,
+                    collapseSize = true
+                )
+            ) to "隐藏占位条 (Visibility = GONE, collapseSize = true)"
+        } else if (node.paddingTop > 0 || node.marginTop > 0) {
+            val isMargin = node.marginTop > 0
+            ExtraAction(
+                viewId = targetId,
+                isGroup = node.isDecor || node.isDecorChild,
+                self = !isDecorChild,
+                childIndex = childIndex,
+                action = ViewAction.Inset(
+                    spacingType = if (isMargin) com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.MARGIN
+                    else com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.PADDING,
+                    edge = com.hal1ucinogen.systembarsmodernizer.bean.InsetEdge.TOP,
+                    customInset = 0
+                )
+            ) to "顶部边距归零 (TOP Inset = 0)"
+        } else {
+            val isMargin = node.marginBottom > 0
+            ExtraAction(
+                viewId = targetId,
+                isGroup = node.isDecor || node.isDecorChild,
+                self = !isDecorChild,
+                childIndex = childIndex,
+                action = ViewAction.Inset(
+                    spacingType = if (isMargin) com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.MARGIN
+                    else com.hal1ucinogen.systembarsmodernizer.bean.SpacingType.PADDING,
+                    edge = com.hal1ucinogen.systembarsmodernizer.bean.InsetEdge.BOTTOM,
+                    customInset = 0
+                )
+            ) to "底部边距归零 (BOTTOM Inset = 0)"
+        }
 
         MaterialAlertDialogBuilder(this.context)
             .setTitle(R.string.inspector_dialog_generate_rule)
-            .setMessage("目标 View: $targetId\n操作: 底部边距归零 (BOTTOM Inset = 0)")
+            .setMessage("目标 View: $targetId\n操作: $actionDesc")
             .setPositiveButton(R.string.inspector_btn_save_apply) { _, _ ->
                 onApplyAction(report.packageName, report.activityName, defaultAction)
                 Toast.makeText(context, R.string.inspector_save_success, Toast.LENGTH_SHORT).show()
