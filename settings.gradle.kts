@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SystemBarsModernizer"
+rootProject.name = "Edgefitter"
 include(":app")
  

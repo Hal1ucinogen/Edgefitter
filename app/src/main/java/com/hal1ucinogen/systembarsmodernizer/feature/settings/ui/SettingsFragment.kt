@@ -145,7 +145,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         // 7. GitHub Link
         findPreference<Preference>("pref_github")?.setOnPreferenceClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Hal1ucinogen/SystemBarsModernizer"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Hal1ucinogen/Edgefitter"))
             runCatching { startActivity(intent) }
             true
         }

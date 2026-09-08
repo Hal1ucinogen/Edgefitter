@@ -281,8 +281,8 @@ sealed interface ViewAction {
 
 ```bash
 # 1. 克隆本仓库
-git clone https://github.com/Hal1ucinogen/SystemBarsModernizer.git
-cd SystemBarsModernizer
+git clone https://github.com/Hal1ucinogen/Edgefitter.git
+cd Edgefitter
 
 # 2. 编译 Debug 版本 APK
 ./gradlew assembleDebug
