@@ -89,6 +89,21 @@
     <string name="field_routes">路由过滤关键字（逗号分隔）</string>
     <string name="hint_routes">例如 x_chat, session_group</string>
     <string name="switch_route_exclusive">排除匹配的路由（黑名单模式）</string>
+    <string name="title_route_filter">路由过滤规则</string>
+    <string name="route_mode_label">匹配模式</string>
+    <string name="route_mode_include">仅在匹配时生效（白名单模式）</string>
+    <string name="route_mode_exclude">排除匹配的路由（黑名单模式）</string>
+    <string name="badge_route_include">包含</string>
+    <string name="badge_route_exclude">排除</string>
+    <string name="label_route_key_prefix">路由键: %1$s</string>
+    <string name="label_route_key_default">默认路由</string>
+    <string name="field_routes_list">路由值列表</string>
+    <string name="field_route_value">路由值</string>
+    <string name="hint_add_route">输入路由关键字，回车/逗号或点击添加</string>
+    <string name="btn_add_route">添加</string>
+    <string name="empty_routes_hint">未添加路由过滤项（留空则对所有路由生效）</string>
+    <string name="msg_route_copied">已复制路由: %1$s</string>
+    <string name="btn_clear_all_routes">清空全部</string>
     
     <string name="msg_config_saved">配置已保存并同步推送至 LSPosed</string>
     <string name="msg_config_reset">配置已重置为默认</string>

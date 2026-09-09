@@ -6,53 +6,125 @@
     android:layout_height="wrap_content"
     android:layout_marginVertical="3dp"
     app:cardBackgroundColor="?attr/colorSurfaceContainer"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="10dp"
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="8dp">
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp">
 
+        <!-- Top Row: View ID + Action Badge + Delete Button -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_view_id"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="middle"
                 android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="13sp"
+                android:textSize="13.5sp"
                 tools:text="decor [child: 0]" />
 
             <TextView
-                android:id="@+id/tv_action_summary"
+                android:id="@+id/tv_action_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="sans-serif"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="11.5sp"
-                tools:text="Padding • Bottom • System Inset" />
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_badge_primary"
+                android:fontFamily="sans-serif-medium"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="11sp"
+                tools:text="Padding • Bottom" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_delete_action"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_delete"
+                android:src="@drawable/ic_delete"
+                app:tint="?attr/colorError" />
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_delete_action"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/action_delete"
-            android:src="@drawable/ic_delete"
-            app:tint="?attr/colorError" />
+        <!-- Secondary Meta Information (Delay, Group, Self, etc.) -->
+        <TextView
+            android:id="@+id/tv_action_meta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="11sp"
+            tools:text="100ms • Group" />
+
+        <!-- Routes Section (Visible when routes is not empty) -->
+        <LinearLayout
+            android:id="@+id/layout_routes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <!-- Route Header: Mode Badge + Route Key -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_route_key"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="monospace"
+                    android:singleLine="true"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11sp"
+                    tools:text="Key: target_tab" />
+
+                <TextView
+                    android:id="@+id/tv_route_mode_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_secondary"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11sp"
+                    tools:text="Include" />
+
+            </LinearLayout>
+
+            <!-- Multi-line Flow of Route Chips -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_routes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                app:chipSpacingHorizontal="6dp"
+                app:chipSpacingVertical="4dp"
+                app:singleLine="false" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

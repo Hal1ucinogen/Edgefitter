@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import androidx.core.view.isGone
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import com.hal1ucinogen.systembarsmodernizer.R
 import com.hal1ucinogen.systembarsmodernizer.bean.ExtraAction
 import com.hal1ucinogen.systembarsmodernizer.bean.InsetEdge
@@ -21,6 +25,8 @@ class ExtraActionEditDialog(
     private var _binding: DialogExtraActionEditBinding? = null
     private val binding get() = _binding!!
 
+    private val currentRoutes = mutableListOf<String>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,6 +38,51 @@ class ExtraActionEditDialog(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fun refreshRouteChips() {
+            binding.chipGroupEditRoutes.removeAllViews()
+            binding.tvEmptyRoutesHint.isGone = currentRoutes.isNotEmpty()
+            binding.btnClearRoutes.isGone = currentRoutes.isEmpty()
+
+            val density = requireContext().resources.displayMetrics.density
+            currentRoutes.forEach { route ->
+                val chip = Chip(requireContext()).apply {
+                    text = route
+                    textSize = 11.5f
+                    chipMinHeight = 26f * density
+                    setEnsureMinTouchTargetSize(false)
+                    chipStartPadding = 8f * density
+                    chipEndPadding = 4f * density
+                    textStartPadding = 0f
+                    textEndPadding = 2f * density
+                    closeIconSize = 14f * density
+                    shapeAppearanceModel = shapeAppearanceModel.toBuilder().setAllCornerSizes(6f * density).build()
+                    isCloseIconVisible = true
+                    setOnCloseIconClickListener {
+                        currentRoutes.remove(route)
+                        refreshRouteChips()
+                    }
+                }
+                binding.chipGroupEditRoutes.addView(chip)
+            }
+        }
+
+        fun addRoutesFromInput(rawInput: String) {
+            val delimiters = charArrayOf(',', '，', ';', '；', '\n')
+            val newItems = rawInput.split(*delimiters)
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+
+            if (newItems.isNotEmpty()) {
+                newItems.forEach { item ->
+                    if (!currentRoutes.contains(item)) {
+                        currentRoutes.add(item)
+                    }
+                }
+                refreshRouteChips()
+            }
+            binding.etRouteInput.setText("")
+        }
 
         // Init values if editing existing action
         initialAction?.let { action ->
@@ -72,13 +123,21 @@ class ExtraActionEditDialog(
             }
             binding.etDelay.setText(action.delay.toString())
             binding.etRouteKey.setText(action.routeKey.orEmpty())
-            if (action.routes.isNotEmpty()) {
-                binding.etRoutes.setText(action.routes.joinToString(", "))
+
+            if (action.isRouteExclusive) {
+                binding.rbRouteExclude.isChecked = true
+            } else {
+                binding.rbRouteInclude.isChecked = true
             }
-            binding.switchRouteExclusive.isChecked = action.isRouteExclusive
+
+            currentRoutes.clear()
+            currentRoutes.addAll(action.routes)
         } ?: run {
             binding.etDelay.setText("100")
+            binding.rbRouteInclude.isChecked = true
         }
+
+        refreshRouteChips()
 
         fun updateVisibility() {
             val isVisibilityAction = binding.rbGone.isChecked || binding.rbInvisible.isChecked
@@ -88,6 +147,30 @@ class ExtraActionEditDialog(
 
         binding.rgActionType.setOnCheckedChangeListener { _, _ -> updateVisibility() }
         updateVisibility()
+
+        // Routes dynamic input handlers
+        binding.btnAddRoute.setOnClickListener {
+            addRoutesFromInput(binding.etRouteInput.text?.toString().orEmpty())
+        }
+
+        binding.btnClearRoutes.setOnClickListener {
+            currentRoutes.clear()
+            refreshRouteChips()
+        }
+
+        binding.etRouteInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addRoutesFromInput(binding.etRouteInput.text?.toString().orEmpty())
+                true
+            } else false
+        }
+
+        binding.etRouteInput.doAfterTextChanged { s ->
+            val text = s?.toString().orEmpty()
+            if (text.endsWith(",") || text.endsWith("，") || text.endsWith("\n") || text.endsWith(";") || text.endsWith("；")) {
+                addRoutesFromInput(text)
+            }
+        }
 
         binding.btnCancelAction.setOnClickListener {
             dismiss()
@@ -118,16 +201,19 @@ class ExtraActionEditDialog(
                 )
             }
 
+            // Include any unsubmitted route text
+            val leftoverRoute = binding.etRouteInput.text?.toString().orEmpty().trim()
+            if (leftoverRoute.isNotEmpty()) {
+                addRoutesFromInput(leftoverRoute)
+            }
+
             val isGroup = binding.switchIsGroup.isChecked
             val self = binding.switchSelf.isChecked
             val childIndex = binding.etChildIndex.text?.toString()?.toIntOrNull() ?: -1
             val delay = binding.etDelay.text?.toString()?.toLongOrNull() ?: 100L
             val routeKey = binding.etRouteKey.text?.toString().orEmpty().trim().ifEmpty { null }
-            val routesStr = binding.etRoutes.text?.toString().orEmpty().trim()
-            val routes = if (routesStr.isNotEmpty()) {
-                routesStr.split(",").map { it.trim() }.filter { it.isNotEmpty() }
-            } else emptyList()
-            val isRouteExclusive = binding.switchRouteExclusive.isChecked
+            val routes = currentRoutes.toList()
+            val isRouteExclusive = binding.rbRouteExclude.isChecked
 
             val action = ExtraAction(
                 viewId = viewId,

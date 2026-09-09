@@ -89,6 +89,21 @@
     <string name="field_routes">Route Filter Keywords (comma separated)</string>
     <string name="hint_routes">e.g. x_chat, session_group</string>
     <string name="switch_route_exclusive">Exclude Matched Routes (Blacklist)</string>
+    <string name="title_route_filter">Route Filter Rules</string>
+    <string name="route_mode_label">Route Filter Mode</string>
+    <string name="route_mode_include">Apply when matched (Whitelist)</string>
+    <string name="route_mode_exclude">Exclude when matched (Blacklist)</string>
+    <string name="badge_route_include">Include</string>
+    <string name="badge_route_exclude">Exclude</string>
+    <string name="label_route_key_prefix">Route Key: %1$s</string>
+    <string name="label_route_key_default">Default Route</string>
+    <string name="field_routes_list">Route Values</string>
+    <string name="field_route_value">Route Value</string>
+    <string name="hint_add_route">Enter route keyword, press Enter/comma or Add</string>
+    <string name="btn_add_route">Add</string>
+    <string name="empty_routes_hint">No routes specified (applies to all routes)</string>
+    <string name="msg_route_copied">Copied: %1$s</string>
+    <string name="btn_clear_all_routes">Clear All</string>
     
     <string name="msg_config_saved">Configuration saved and synced to LSPosed</string>
     <string name="msg_config_reset">Configuration reset to default</string>

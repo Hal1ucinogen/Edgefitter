@@ -234,58 +234,191 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Routes Filter -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_route_key"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+        <!-- Routes Filter Section -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:hint="@string/field_route_key"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:placeholderText="@string/hint_route_key">
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_route_key"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textSize="14sp" />
+                android:orientation="vertical"
+                android:padding="12dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <!-- Section Title & Mode Header -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/title_route_filter"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13.5sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_routes"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:hint="@string/field_routes"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:placeholderText="@string/hint_routes">
+                <!-- Filter Mode: Include vs Exclude -->
+                <RadioGroup
+                    android:id="@+id/rg_route_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_routes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textSize="14sp" />
+                    <RadioButton
+                        android:id="@+id/rb_route_include"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/route_mode_include"
+                        android:textSize="12.5sp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+                    <RadioButton
+                        android:id="@+id/rb_route_exclude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_mode_exclude"
+                        android:textSize="12.5sp" />
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_route_exclusive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/switch_route_exclusive"
-            android:textSize="13.5sp" />
+                </RadioGroup>
+
+                <!-- Route Key -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_route_key"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/field_route_key"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:endIconMode="clear_text"
+                    app:placeholderText="@string/hint_route_key">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_route_key"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="13.5sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Route Items Label & Clear Button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/field_routes_list"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="12.5sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_clear_routes"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="0dp"
+                        android:text="@string/btn_clear_all_routes"
+                        android:textColor="?attr/colorError"
+                        android:textSize="11.5sp" />
+
+                </LinearLayout>
+
+                <!-- Empty State Hint -->
+                <TextView
+                    android:id="@+id/tv_empty_routes_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/empty_routes_hint"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11.5sp" />
+
+                <!-- Dynamic Chips Container (Multiple lines) -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_edit_routes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="4dp"
+                    app:singleLine="false" />
+
+                <!-- Route Input Hint / Instruction -->
+                <TextView
+                    android:id="@+id/tv_route_input_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/hint_add_route"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="11.5sp" />
+
+                <!-- Add Route Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_route_input"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/field_route_value"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:endIconMode="clear_text">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_route_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:textSize="13sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_add_route"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/btn_add_route"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Dialog Buttons -->
         <LinearLayout
