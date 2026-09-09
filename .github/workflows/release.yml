@@ -61,8 +61,13 @@ jobs:
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
           else
-            VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | head -n 1 | sed -E 's/.*"([^"]+)".*/\1/')
-            TAG="v${VERSION_NAME}"
+            APK_NAME=$(ls app/build/outputs/apk/release/Edgefitter-v*.apk 2>/dev/null | head -n 1)
+            if [ -n "$APK_NAME" ]; then
+              TAG=$(basename "$APK_NAME" .apk | sed 's/Edgefitter-//')
+            else
+              TAG=$(git describe --tags --always)
+              [[ ! "$TAG" =~ ^v ]] && TAG="v$TAG"
+            fi
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
